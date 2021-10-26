@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.BtnZakaz:
                     Toast toast = Toast.makeText(getApplicationContext(), "Сумма заказа: " + price + "₽", Toast.LENGTH_LONG);
                     toast.show();
+                    for(int ii=0;ii<kol.size();ii++)
+                    {
+                        kol.remove(0);
+                        ii--;
+                    }
+                    z=true;
                     price = 0;
                     TVPrice.setText(price + "₽");
                     break;
@@ -164,13 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dbOutputRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)) ;
 
                 TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-
-                TextView outid = new TextView(this);
-                params.weight = 1.0f;
-                params.width=30;
-                outid.setLayoutParams(params);
-                outid.setText(cursor.getString(idIndex));
-                dbOutputRow.addView(outid);
 
                 TextView outputName = new TextView(this);
                 params.weight = 3.0f;

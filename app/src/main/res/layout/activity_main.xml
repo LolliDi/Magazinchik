@@ -33,7 +33,7 @@
         android:id="@+id/TVPrice"
         android:layout_width="134dp"
         android:layout_height="25dp"
-        android:text="0₽"
+        android:text="0.0₽"
         android:textAlignment="center"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
