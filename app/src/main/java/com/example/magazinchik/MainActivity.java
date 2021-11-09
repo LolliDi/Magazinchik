@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,27 +27,22 @@ import java.util.ListIterator;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int LONG_DELAY = 7000;
-    TextView TVPrice;
     EditText etNazv, etPrice;
     SQLiteDatabase database;
     ContentValues contentValues;
     DBHelper dbHelper;
-    List kol = new ArrayList();
-
-    boolean z = true; // первый проход по записям
-    float price = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button BtnZakaz = findViewById(R.id.BtnZakaz);
-        BtnZakaz.setOnClickListener(this);
-
         Button BtnTovar = findViewById(R.id.BtnNewTovar);
         BtnTovar.setOnClickListener(this);
 
-        TVPrice = findViewById(R.id.TVPrice);
+        Button btnMagaz = findViewById(R.id.btnMag);
+        btnMagaz.setOnClickListener(this);
+
+
         etNazv = findViewById(R.id.etNazv);
         etPrice=findViewById(R.id.etPrice);
         dbHelper = new DBHelper(this);
@@ -57,40 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Button b = (Button) v;
-        String s = b.getText().toString();
-        if(s=="В корзину")
-        {
-            Cursor cursor = database.query(DBHelper.tb_contacts, null, null, null, null, null, null);
-            int gid = v.getId();
-            cursor.moveToPosition(gid-1);
-            int id = cursor.getColumnIndex(DBHelper.sprice);
-            try{
-                price+=Float.valueOf(cursor.getString(id));
-                kol.set(gid-1,((int)kol.get(gid-1)+1));
-                TVPrice.setText(price + "₽");
-            }
-            catch(Exception ee)
-            {
-                Toast ttt = Toast.makeText(getApplicationContext(), "Ошибка!\n"+ee, Toast.LENGTH_LONG);
-                ttt.show();
-            }
-            cursor.close();
-        }
-        else {
             switch (v.getId()) {
-                case R.id.BtnZakaz:
-                    Toast toast = Toast.makeText(getApplicationContext(), "Сумма заказа: " + price + "₽", Toast.LENGTH_LONG);
-                    toast.show();
-                    for(int ii=0;ii<kol.size();ii++)
-                    {
-                        kol.remove(0);
-                        ii--;
-                    }
-                    z=true;
-                    price = 0;
-                    TVPrice.setText(price + "₽");
-                    break;
                 case R.id.BtnNewTovar:
                     try {
                         String naz = etNazv.getText().toString();
@@ -99,32 +62,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         contentValues.put(DBHelper.nazv, naz);
                         contentValues.put(DBHelper.sprice, spr);
                         database.insert(DBHelper.tb_contacts, null, contentValues);
-                        kol.add(0);
                     } catch (Exception ee) {
                         Toast tt = Toast.makeText(getApplicationContext(), "Ошибка!", Toast.LENGTH_LONG);
                         tt.show();
                     }
                     break;
+                case R.id.btnMag:
+                    Intent inten = new Intent(this,Magaz.class);
+                    startActivity(inten);
+                    break;
                 default:
+                    try{
+                        contentValues = new ContentValues();
                     View outputDBRow = (View) v.getParent();
                     ViewGroup outputDB = (ViewGroup) outputDBRow.getParent();
                     outputDB.removeView(outputDBRow);
                     outputDB.invalidate();
                     int gid = v.getId();
-
-                    Cursor cursor = database.query(DBHelper.tb_contacts, null, null, null, null, null, null);
-                    cursor.moveToPosition(gid-1);
-                    int id = cursor.getColumnIndex(DBHelper.sprice);
-                    try{
-                        price-=(Float.valueOf(cursor.getString(id)))*((int)kol.get(gid-1));
-                        TVPrice.setText(price + "₽");
-                        kol.remove(gid-1);
-                    }catch (Exception ee) {
-                        Toast tt = Toast.makeText(getApplicationContext(), ""+ee, Toast.LENGTH_LONG);
-                        tt.show();
-                    }
-
-                    cursor.close();
                     database.delete(DBHelper.tb_contacts, DBHelper.KEY_ID + " = ?", new String[]{String.valueOf(gid)});
                     Cursor cursorUpdater = database.query(DBHelper.tb_contacts, null, null, null, null, null, null);
                     int realID = 1;
@@ -133,9 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             int idIndex = cursorUpdater.getColumnIndex(DBHelper.KEY_ID);
                             int nazvIndex = cursorUpdater.getColumnIndex(DBHelper.nazv);
                             int priceIndex = cursorUpdater.getColumnIndex(DBHelper.sprice);
-
-                            do {
-                                if (cursorUpdater.getInt(idIndex) != realID) {
+                            do { if (cursorUpdater.getInt(idIndex) != realID) {
                                     contentValues.put(DBHelper.KEY_ID, realID);
                                     contentValues.put(dbHelper.nazv, cursorUpdater.getString(nazvIndex));
                                     contentValues.put(dbHelper.sprice, cursorUpdater.getString(priceIndex));
@@ -148,10 +100,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         }
                         cursorUpdater.close();
-                        break;
                     }
+                    } catch (Exception ee) {
+                        Toast tt = Toast.makeText(getApplicationContext(), "Ошибка!"+ee, Toast.LENGTH_LONG);
+                        tt.show();}
+                    break;
             }
-        }
         UpdateTable();
     }
     public void UpdateTable()
@@ -194,21 +148,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BtnDelete.setId(cursor.getInt(idIndex));
                 dbOutputRow.addView(BtnDelete);
 
-                Button BtnKorz = new Button(this);
-                BtnKorz.setOnClickListener(this);
-                BtnKorz.setWidth(100);
-                params.weight = 1.0f;
-                BtnKorz.setLayoutParams(params);
-                BtnKorz.setText("В корзину");
-                BtnKorz.setId(cursor.getInt(idIndex));
-                dbOutputRow.addView(BtnKorz);
-
                 dbOutput.addView(dbOutputRow);
-                if(z)
-                    kol.add(0);
 
             } while(cursor.moveToNext());
-            z=false;
         }
         cursor.close();
     }
