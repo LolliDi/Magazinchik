@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button btnMagaz = findViewById(R.id.btnMag);
         btnMagaz.setOnClickListener(this);
 
-
         etNazv = findViewById(R.id.etNazv);
         etPrice=findViewById(R.id.etPrice);
         dbHelper = new DBHelper(this);
@@ -63,12 +62,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         contentValues.put(DBHelper.sprice, spr);
                         database.insert(DBHelper.tb_contacts, null, contentValues);
                     } catch (Exception ee) {
-                        Toast tt = Toast.makeText(getApplicationContext(), "Ошибка!", Toast.LENGTH_LONG);
+                        Toast tt = Toast.makeText(getApplicationContext(), "Ошибка!\n"+ee, Toast.LENGTH_LONG);
                         tt.show();
                     }
                     break;
                 case R.id.btnMag:
                     Intent inten = new Intent(this,Magaz.class);
+                    inten.putExtra("thisUser",false);
                     startActivity(inten);
                     break;
                 default:

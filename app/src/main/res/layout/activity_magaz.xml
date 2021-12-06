@@ -12,13 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="92dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginBottom="5dp"
         android:text="БД"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnMag"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dbOutput"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnMag"
@@ -26,26 +24,24 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="68dp"
+        android:layout_marginBottom="5dp"
         android:text="Магазин"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnbd"
-        app:layout_constraintTop_toBottomOf="@+id/dbOutput"
-        app:layout_constraintVertical_bias="0.066" />
+        app:layout_constraintStart_toEndOf="@+id/btnbd" />
 
     <TableLayout
         android:id="@+id/dbOutput"
         android:layout_width="385dp"
-        android:layout_height="497dp"
+        android:layout_height="450dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnMag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.694">
+        app:layout_constraintTop_toBottomOf="@+id/btnZak">
 
         <TableRow
             android:layout_width="match_parent"

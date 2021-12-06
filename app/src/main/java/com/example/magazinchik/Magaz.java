@@ -34,12 +34,21 @@ public class Magaz extends AppCompatActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magaz);
 
+        Bundle arg = getIntent().getExtras();
+        boolean thisUser = arg.getBoolean("thisUser",false);
+
         Button BtnZak = findViewById(R.id.btnZak);
         BtnZak.setOnClickListener(this);
 
         Button btndd = findViewById(R.id.btnbd);
-        btndd.setOnClickListener(this);
-
+        if(thisUser)
+        {
+            btndd.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            btndd.setOnClickListener(this);
+        }
         TVPrice = findViewById(R.id.TVPrice);
         dbHelper = new DBHelper(this);
         database = dbHelper.getReadableDatabase();
